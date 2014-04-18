@@ -736,7 +736,7 @@ class BasicFunctionalityTestCase(FlaskTestCase):
             return 'Meh', 400, {
                 'X-Foo': 'Testing',
                 'Content-Type': 'text/plain; charset=utf-8'
-            } 
+            }
         @app.route('/two_args')
         def from_two_args_tuple():
             return 'Hello', {
@@ -825,6 +825,19 @@ class BasicFunctionalityTestCase(FlaskTestCase):
             self.assert_equal(flask.url_for('hello', name='test x'), '/hello/test%20x')
             self.assert_equal(flask.url_for('hello', name='test x', _external=True),
                               'http://localhost/hello/test%20x')
+
+    def test_url_generation_with_port(self):
+        app = flask.Flask(__name__)
+        app.config.update(
+            SERVER_NAME='localhost:5001'
+        )
+
+        @app.route('/hello')
+        def hello():
+            pass
+        with app.test_request_context():
+            self.assert_equal(flask.url_for('hello', _external=True),
+                              'http://localhost:5001/hello')
 
     def test_build_error_handler(self):
         app = flask.Flask(__name__)
